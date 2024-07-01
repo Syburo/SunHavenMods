@@ -4,12 +4,7 @@ using Wish;
 using BepInEx.Logging;
 using I2.Loc;
 using System.Collections.Generic;
-using System;
-using UnityEngine.Events;
-using System.Reflection;
 using System.Linq;
-using System.Collections;
-using static UnityEngine.GraphicsBuffer;
 
 [BepInPlugin(pluginGuid, pluginName, pluginVersion)]
 public class MultipleSpouseMod : BaseUnityPlugin
