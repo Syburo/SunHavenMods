@@ -5,12 +5,13 @@ using BepInEx.Logging;
 using I2.Loc;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 [BepInPlugin(pluginGuid, pluginName, pluginVersion)]
-public class MultipleSpouseMod : BaseUnityPlugin
+public class MultipleSpousesMod : BaseUnityPlugin
 {
-    public const string pluginGuid = "syburo.sunhaven.multiplespousemod";
-    public const string pluginName = "Multiple Spouse Mod";
+    public const string pluginGuid = "syburo.sunhaven.multiplespousesmod";
+    public const string pluginName = "Multiple Spouses Mod";
     public const string pluginVersion = "0.1.0";
     private Harmony m_harmony = new Harmony(pluginGuid);
     public static ManualLogSource logger;
@@ -309,7 +310,264 @@ public class MultipleSpouseMod : BaseUnityPlugin
         }
     }
 
-    [HarmonyPatch(typeof(Player), "RequestSleep")]
+    [HarmonyPatch(typeof(NPCAI), "HandleMemoryLossPotion")]
+    class HarmonyPatch_NPCAI_HandleMemoryLossPotion
+    {
+        private static bool Prefix(ref string __result, out bool response, NPCAI __instance, ref string ____npcName)
+        {
+            response = true;
+
+            List<string> spouses = new List<string>();
+            int count = 0;
+            foreach (var npcai in SingletonBehaviour<NPCManager>.Instance._npcs.Values.Where(npcai => SingletonBehaviour<GameSave>.Instance.GetProgressBoolCharacter("MarriedTo" + npcai.OriginalName)))
+            {
+                spouses.Add(npcai.OriginalName);
+                count += 1;
+            }
+            if (count <= 1)
+            {
+                return true;
+            }
+
+            bool flag = __instance.IsMarriedToPlayer();
+            __instance.PlatonicPlayer();
+            string new_main;
+
+            if (GameSave.CurrentCharacter.Relationships.ContainsKey(____npcName))
+            {
+                GameSave.CurrentCharacter.Relationships[____npcName] = Mathf.Max(0f, GameSave.CurrentCharacter.Relationships[____npcName]);
+            }
+            string progressStringCharacter = SingletonBehaviour<GameSave>.Instance.GetProgressStringCharacter("MarriedWith");
+
+            if (progressStringCharacter.Equals(____npcName))
+            {
+                if (spouses[0] == ____npcName)
+                {
+                    new_main = spouses[1];
+                }
+                else
+                {
+                    new_main = spouses[0];
+                }
+                SingletonBehaviour<GameSave>.Instance.SetProgressStringCharacter("MarriedWith", new_main);
+                SingletonBehaviour<GameSave>.Instance.SetProgressBoolCharacter("MarriedTo" + progressStringCharacter, false);
+                SingletonBehaviour<GameSave>.Instance.SetProgressBoolWorld(____npcName + "MarriedWalkPath", false, true);
+                NPCAI realNPC = SingletonBehaviour<NPCManager>.Instance.GetRealNPC(____npcName);
+                realNPC.GeneratePath();
+                SingletonBehaviour<NPCManager>.Instance.StartNPCPath(realNPC);
+            }
+            __instance.GenerateCycle(false);
+
+            if (flag)
+            {
+                switch (____npcName)
+                {
+                    case "Wornhardt":
+                        __result = ScriptLocalization.RNPC_Wornhardt_MLP_Married;
+                        return false;
+                    case "Zaria":
+                        __result = ScriptLocalization.RNPC_Zaria_MLP_Married;
+                        return false;
+                    case "Donovan":
+                        __result = ScriptLocalization.RNPC_Donovan_MLP_Married;
+                        return false;
+                    case "Karish":
+                        __result = ScriptLocalization.RNPC_Karish_MLP_Married;
+                        return false;
+                    case "Claude":
+                        __result = ScriptLocalization.RNPC_Claude_MLP_Married;
+                        return false;
+                    case "Jun":
+                        __result = ScriptLocalization.RNPC_Jun_MLP_Married;
+                        return false;
+                    case "Vivi":
+                        __result = ScriptLocalization.RNPC_Vivi_MLP_Married;
+                        return false;
+                    case "Lynn":
+                        __result = ScriptLocalization.RNPC_Lynn_MLP_Married;
+                        return false;
+                    case "Liam":
+                        __result = ScriptLocalization.RNPC_Liam_MLP_Married;
+                        return false;
+                    case "Anne":
+                        __result = ScriptLocalization.RNPC_Anne_MLP_Married;
+                        return false;
+                    case "Miyeon":
+                        __result = ScriptLocalization.RNPC_Miyeon_MLP_Married;
+                        return false;
+                    case "Kitty":
+                        __result = ScriptLocalization.RNPC_Kitty_MLP_Married;
+                        return false;
+                    case "Lucius":
+                        __result = ScriptLocalization.RNPC_Lucius_MLP_Married;
+                        return false;
+                    case "Shang":
+                        __result = ScriptLocalization.RNPC_Shang_MLP_Married;
+                        return false;
+                    case "Wesley":
+                        __result = ScriptLocalization.RNPC_Wesley_MLP_Married;
+                        return false;
+                    case "Darius":
+                        __result = ScriptLocalization.RNPC_Darius_MLP_Married;
+                        return false;
+                    case "Xyla":
+                        __result = ScriptLocalization.RNPC_Xyla_MLP_Married;
+                        return false;
+                    case "Catherine":
+                        __result = ScriptLocalization.RNPC_Catherine_MLP_Married;
+                        return false;
+                    case "Lucia":
+                        __result = ScriptLocalization.RNPC_Lucia_MLP_Married;
+                        return false;
+                    case "Iris":
+                        __result = ScriptLocalization.RNPC_Iris_MLP_Married;
+                        return false;
+                    case "Kai":
+                        __result = ScriptLocalization.RNPC_Kai_MLP_Married;
+                        return false;
+                    case "Vaan":
+                        __result = ScriptLocalization.RNPC_Vaan_MLP_Married;
+                        return false;
+                    case "Nathaniel":
+                        __result = ScriptLocalization.RNPC_Nathaniel_MLP_Married;
+                        return false;
+                    default:
+                        __result = ScriptLocalization.RNPC_Anne_MLP_Married;
+                        return false;
+                }
+            }
+            switch (____npcName)
+            {
+                case "Wornhardt":
+                    __result = ScriptLocalization.RNPC_Wornhardt_MLP;
+                    return false;
+                case "Zaria":
+                    __result = ScriptLocalization.RNPC_Zaria_MLP;
+                    return false;
+                case "Donovan":
+                    __result = ScriptLocalization.RNPC_Donovan_MLP;
+                    return false;
+                case "Karish":
+                    __result = ScriptLocalization.RNPC_Karish_MLP;
+                    return false;
+                case "Claude":
+                    __result = ScriptLocalization.RNPC_Claude_MLP;
+                    return false;
+                case "Jun":
+                    __result = ScriptLocalization.RNPC_Jun_MLP;
+                    return false;
+                case "Vivi":
+                    __result = ScriptLocalization.RNPC_Vivi_MLP;
+                    return false;
+                case "Lynn":
+                    __result = ScriptLocalization.RNPC_Lynn_MLP;
+                    return false;
+                case "Liam":
+                    __result = ScriptLocalization.RNPC_Liam_MLP;
+                    return false;
+                case "Anne":
+                    __result = ScriptLocalization.RNPC_Anne_MLP;
+                    return false;
+                case "Miyeon":
+                    __result = ScriptLocalization.RNPC_Miyeon_MLP;
+                    return false;
+                case "Kitty":
+                    __result = ScriptLocalization.RNPC_Kitty_MLP;
+                    return false;
+                case "Lucius":
+                    __result = ScriptLocalization.RNPC_Lucius_MLP;
+                    return false;
+                case "Shang":
+                    __result = ScriptLocalization.RNPC_Shang_MLP;
+                    return false;
+                case "Wesley":
+                    __result = ScriptLocalization.RNPC_Wesley_MLP;
+                    return false;
+                case "Darius":
+                    __result = ScriptLocalization.RNPC_Darius_MLP;
+                    return false;
+                case "Xyla":
+                    __result = ScriptLocalization.RNPC_Xyla_MLP;
+                    return false;
+                case "Catherine":
+                    __result = ScriptLocalization.RNPC_Catherine_MLP;
+                    return false;
+                case "Lucia":
+                    __result = ScriptLocalization.RNPC_Lucia_MLP;
+                    return false;
+                case "Iris":
+                    __result = ScriptLocalization.RNPC_Iris_MLP;
+                    return false;
+                case "Kai":
+                    __result = ScriptLocalization.RNPC_Kai_MLP;
+                    return false;
+                case "Vaan":
+                    __result = ScriptLocalization.RNPC_Vaan_MLP;
+                    return false;
+                case "Nathaniel":
+                    __result = ScriptLocalization.RNPC_Nathaniel_MLP;
+                    return false;
+                default:
+                    __result = ScriptLocalization.RNPC_Anne_MLP;
+                    return false;
+            }
+        }
+    }
+
+
+    [HarmonyPatch(typeof(NPCAI), "MarryPlayer")]
+    class HarmonyPatch_Player_MarryPlayer
+    {
+        private static bool Prefix(NPCAI __instance, ref string ____npcName)
+        {
+            List<string> spouses = new List<string>();
+            int count = 0;
+            string new_main;
+
+            foreach (var npcai in SingletonBehaviour<NPCManager>.Instance._npcs.Values.Where(npcai => SingletonBehaviour<GameSave>.Instance.GetProgressBoolCharacter("MarriedTo" + npcai.OriginalName)))
+            {
+                spouses.Add(npcai.OriginalName);
+                count += 1;
+            }
+            if (count <= 1)
+            {
+                return true;
+            }
+
+            if (spouses[0] == ____npcName)
+            {
+                new_main = spouses[1];
+            }
+            else
+            {
+                new_main = spouses[0];
+            }
+            string current_spouse = SingletonBehaviour<GameSave>.Instance.GetProgressStringCharacter("MarriedWith");
+
+            SingletonBehaviour<GameSave>.Instance.SetProgressBoolWorld(current_spouse + "MarriedWalkPath", false, true);
+            NPCAI realNPC = SingletonBehaviour<NPCManager>.Instance.GetRealNPC(current_spouse);
+            realNPC.GeneratePath();
+            SingletonBehaviour<NPCManager>.Instance.StartNPCPath(realNPC);
+
+            SingletonBehaviour<GameSave>.Instance.SetProgressBoolCharacter("MarriedTo" + ____npcName, true);
+            SingletonBehaviour<GameSave>.Instance.SetProgressBoolCharacter("Married", true);
+            SingletonBehaviour<GameSave>.Instance.SetProgressBoolCharacter("Dating" + ____npcName, false);
+            SingletonBehaviour<GameSave>.Instance.SetProgressStringCharacter("MarriedWith", ____npcName);
+            if (SingletonBehaviour<GameSave>.Instance.GetProgressBoolWorld("Tier3House"))
+            {
+                SingletonBehaviour<GameSave>.Instance.SetProgressBoolWorld(____npcName + "MarriedWalkPath", true, true);
+                realNPC = SingletonBehaviour<NPCManager>.Instance.GetRealNPC(____npcName);
+                realNPC.GeneratePath();
+                SingletonBehaviour<NPCManager>.Instance.StartNPCPath(realNPC);
+            }
+            Utilities.UnlockAcheivement(100);
+            __instance.GenerateCycle(false);
+            return false;
+        }
+    }
+
+
+            [HarmonyPatch(typeof(Player), "RequestSleep")]
     class HarmonyPatch_Player_RequestSleep
     {
         private static bool Prefix(bool isMarriageBed = false, MarriageOvernightCutscene marriageOvernightCutscene = null, bool isCutsceneComplete = false)
@@ -520,6 +778,7 @@ public class MultipleSpouseMod : BaseUnityPlugin
                     SingletonBehaviour<GameSave>.Instance.SetProgressStringCharacter("MarriedWith", new_main);
                 }
                 SingletonBehaviour<GameSave>.Instance.SetProgressBoolCharacter("MarriedTo" + name, false);
+
                 NPCAI realNPC = SingletonBehaviour<NPCManager>.Instance.GetRealNPC(name);
                 realNPC.GeneratePath();
                 SingletonBehaviour<NPCManager>.Instance.StartNPCPath(realNPC);

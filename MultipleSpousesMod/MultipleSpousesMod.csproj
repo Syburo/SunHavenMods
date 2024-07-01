@@ -7,8 +7,8 @@
     <ProjectGuid>{F5528909-D764-4BFA-A1F1-0178DD007CF2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MultipleSpouseMod</RootNamespace>
-    <AssemblyName>MultipleSpouseMod</AssemblyName>
+    <RootNamespace>MultipleSpousesMod</RootNamespace>
+    <AssemblyName>MultipleSpousesMod</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="MultipleSpouseMod.cs" />
+    <Compile Include="MultipleSpousesMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
