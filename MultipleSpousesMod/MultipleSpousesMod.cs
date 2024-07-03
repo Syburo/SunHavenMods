@@ -6,13 +6,14 @@ using I2.Loc;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Collections;
 
 [BepInPlugin(pluginGuid, pluginName, pluginVersion)]
 public class MultipleSpousesMod : BaseUnityPlugin
 {
     public const string pluginGuid = "syburo.sunhaven.multiplespousesmod";
     public const string pluginName = "Multiple Spouses Mod";
-    public const string pluginVersion = "0.1.0";
+    public const string pluginVersion = "0.1.1";
     private Harmony m_harmony = new Harmony(pluginGuid);
     public static ManualLogSource logger;
 
@@ -188,14 +189,11 @@ public class MultipleSpousesMod : BaseUnityPlugin
                         break;
                 }
             }
-            foreach (var QuestName in Player.Instance.QuestList.questLog)
+            foreach (string quest in Player.Instance.QuestList.questLog.Keys.ToList<string>())
             {
-                if (QuestName.Key.Contains("MarriageQuest"))
+                if (quest.Contains("MarriageQuest"))
                 {
-                    flag = true;
-                    __result = "You are already engaged.";
-                    Player.Instance.Inventory.AddItem(6107, 1, false);
-                    return false;
+                    Player.Instance.QuestList.AbandonQuest(quest);
                 }
             }
             if (flag)
